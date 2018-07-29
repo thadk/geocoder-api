@@ -19,6 +19,8 @@
     </changeSet>
 
     <changeSet id="add_initial_data" author="sdimunzio">
+    <validCheckSum>ANY</validCheckSum>
+    <!-- the rest of your changeSet here -->
         <sqlFile path="sql/initial_data.sql"></sqlFile>
     </changeSet>
 
