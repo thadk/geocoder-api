@@ -18,4 +18,7 @@ gadm28_adm2_small_ghana.shp: gadm28_adm2.shp
 #Gushegu,Yendi,East,Gonja,Savelugu,Kumbugu,West,Gonja,Mion,Central,Gonja,Karaga,Bole,Tolon
 
 gadm28_adm2_small_ghana.sql: gadm28_adm2_small_ghana.shp
-	/Applications/Postgres.app/Contents/Versions/10/bin/shp2pgsql -I -s 4326 $< public.boundaries > $@
+	#-a appends, -d drops and recreates, -c creates new table but be aware it puts wrong length on varchar()
+	/applications/postgres.app/contents/versions/10/bin/shp2pgsql -a -i -s 4326 $< public.boundaries > $@
+
+
