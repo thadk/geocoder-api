@@ -3,23 +3,6 @@
     <!-- keep console log colors configured in spring boot -->
     <include resource="org/springframework/boot/logging/logback/base.xml" />
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>/var/log/geocoder-api.log</file>
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>/var/log/geocoder-api-logger.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <!-- or whenever the file size reaches 64MB -->
-                <maxFileSize>64MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 30 days' worth of history -->
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-    </appender>
-
     <logger name="org.hibernate.tool.hbm2ddl" level="WARN" />
     <logger name="org.hibernate.cache.ehcache" level="ERROR" />
 
