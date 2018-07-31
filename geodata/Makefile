@@ -23,10 +23,10 @@ gadm28_adm2_small_ghana.sql: gadm28_adm2_small_ghana.shp
 heroku-shapes: gadm28_adm2_small_ghana.sql
 	heroku pg:psql -a salty-gorge-12975 < $<
 
-gha_adm2.geojson:
+gha_adm2_2012.geojson:
 	curl 'https://services3.arcgis.com/ws02YueEUND55usQ/ArcGIS/rest/services/Ghana_District_League/FeatureServer/1/query?where=1=1&outFields=*&returnGeometry=true&f=pgeojson' -o $@
 
-gha_likegadm_adm2.geojson: gha_adm2.geojson gadm36_GHA_gpkg/gha_region_gadm.shp
+gha_likegadm_adm2.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_region_gadm.shp
 	mapshaper -i $< \
 		-proj +proj=longlat +datum=WGS84 +no_defs from='+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs' \
 		-info \
@@ -44,7 +44,7 @@ gha_likegadm_adm2.geojson: gha_adm2.geojson gadm36_GHA_gpkg/gha_region_gadm.shp
 		-o $@ format=geojson
 
 
-gha_likegadm_adm2_points.geojson: gha_adm2.geojson gadm36_GHA_gpkg/gha_region_gadm.shp
+gha_likegadm_adm2_points.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_region_gadm.shp
 	mapshaper -i $< \
 		-proj +proj=longlat +datum=WGS84 +no_defs from='+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs' \
 		-info \
