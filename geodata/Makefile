@@ -18,10 +18,24 @@ gadm28_adm2_small_ghana.shp: gadm28_adm2.shp
 
 gadm28_adm2_small_ghana.sql: gadm28_adm2_small_ghana.shp
 	#-a appends, -d drops and recreates, -c creates new table but be aware it puts wrong length on varchar()
-	/Applications/postgres.app/contents/versions/10/bin/shp2pgsql -a -I -s 4326 $< public.boundaries > $@
+	/Applications/postgres.app/contents/versions/10/bin/shp2pgsql - -I -s 4326 $< public.boundaries > $@
 
-heroku-shapes: gadm28_adm2_small_ghana.sql
+gha_likegadm_adm2_2012_north.sql: gha_likegadm_adm2_2012_north.shp
+	#-a appends, -d drops and recreates, -c creates new table but be aware it puts wrong length on varchar()
+	/Applications/postgres.app/contents/versions/10/bin/shp2pgsql -c -I -s 4326 $< public.boundaries > $@
+
+
+heroku-shapes: gha_likegadm_adm2_2012_north.sql
 	heroku pg:psql -a salty-gorge-12975 < $<
+	# \d+ boundaries
+	#ALTER TABLE boundaries add column "iso" varchar(3);
+	#update boundaries set iso=gid_0;
+	#ALTER TABLE boundaries add column "id_0" integer;
+	#update boundaries set id_0=87;
+	#ALTER TABLE boundaries add column "id_1" int2;
+	#ALTER TABLE boundaries add column "id_2" int2;
+	#update boundaries set id_2=fid;
+	#update boundaries set id_1=fid__26;
 
 gha_adm2_2012.geojson:
 	curl 'https://services3.arcgis.com/ws02YueEUND55usQ/ArcGIS/rest/services/Ghana_District_League/FeatureServer/1/query?where=1=1&outFields=*&returnGeometry=true&f=pgeojson' -o $@
@@ -43,6 +57,10 @@ gha_likegadm_adm2.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_region_gadm
 				-info \
 		-o $@ format=geojson
 
+gha_likegadm_adm2_2012_north.shp: gha_likegadm_adm2.geojson
+	mapshaper -i $< \
+	-filter '"Northern,Upper West,Upper East".indexOf(NAME_1) > -1' \
+	-o $@ format=shapefile
 
 gha_likegadm_adm2_points.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_region_gadm.shp
 	mapshaper -i $< \
@@ -53,3 +71,4 @@ gha_likegadm_adm2_points.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_regi
 		-info \
 		-join target=pt source=rg \
 		-o $@ format=shapefile
+
