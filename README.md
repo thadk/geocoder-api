@@ -2,6 +2,10 @@
 
 geocoder-api is RESTFull API that provide support for geocoding operations.  
 
+## TODO: move migrations into Heroku release phase so app can easily boot
+in less than 90s.
+https://help.heroku.com/LSXQDDSI/why-does-my-java-app-crash-with-an-r10-error
+
 ## Installing
 
     $ git clone https://github.com/devgateway/geocoder-api.git
