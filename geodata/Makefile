@@ -18,7 +18,7 @@ gadm28_adm2_small_ghana.shp: gadm28_adm2.shp
 
 gadm28_adm2_small_ghana.sql: gadm28_adm2_small_ghana.shp
 	#-a appends, -d drops and recreates, -c creates new table but be aware it puts wrong length on varchar()
-	/Applications/postgres.app/contents/versions/10/bin/shp2pgsql - -I -s 4326 $< public.boundaries > $@
+	/Applications/postgres.app/contents/versions/10/bin/shp2pgsql -c -I -s 4326 $< public.boundaries > $@
 
 gha_likegadm_adm2_2012_north.sql: gha_likegadm_adm2_2012_north.shp
 	#-a appends, -d drops and recreates, -c creates new table but be aware it puts wrong length on varchar()
@@ -53,7 +53,7 @@ gha_likegadm_adm2.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_region_gadm
 		-info \
 		-join target=poly source=pt unjoined unmatched \
 		-filter-fields target=poly 'CC_1,DISTRICT,ENGTYPE_1,FID,fid,GID_0,GID_1,GlobalID,HASC_1,NAME_0,NAME_1,NL_NAME_1,OBJECTID,REGION,Shape__Area,Shape__Length,TYPE_1,VARNAME_1' \
-		-each target=poly 'GID_2=GID_1+"_"+OBJECTID, NAME_2=DISTRICT, VARNAME_2="", NL_NAME_2="", TYPE_2="District", ENGTYPE_2="District", CC_2=CC_1, HASC_2=HASC_1+"."+DISTRICT[0].toUpperCase()+DISTRICT[1].toUpperCase(), CONTINENT="Africa"' \
+		-each target=poly 'GID_2=GID_1+"_"+OBJECTID, GID_0=87, NAME_2=DISTRICT, VARNAME_2="", NL_NAME_2="", TYPE_2="District", ENGTYPE_2="District", CC_2=CC_1, HASC_2=HASC_1+"."+DISTRICT[0].toUpperCase()+DISTRICT[1].toUpperCase(), CONTINENT="Africa"' \
 				-info \
 		-o $@ format=geojson
 
@@ -61,6 +61,11 @@ gha_likegadm_adm2_2012_north.shp: gha_likegadm_adm2.geojson
 	mapshaper -i $< \
 	-filter '"Northern,Upper West,Upper East".indexOf(NAME_1) > -1' \
 	-o $@ format=shapefile
+
+gha_likegadm_adm2_2012_north.geojson: gha_likegadm_adm2.geojson
+	mapshaper -i $< \
+	-filter '"Northern,Upper West,Upper East".indexOf(NAME_1) > -1' \
+	-o $@ format=geojson	
 
 gha_likegadm_adm2_points.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_region_gadm.shp
 	mapshaper -i $< \
@@ -72,3 +77,16 @@ gha_likegadm_adm2_points.geojson: gha_adm2_2012.geojson gadm36_GHA_gpkg/gha_regi
 		-join target=pt source=rg \
 		-o $@ format=shapefile
 
+ungeocoded_centroids.geojson: gha_adm2_2012.geojson gha_likegadm_adm2.geojson GHA_District_Capitals/GHA_District_Capitals.shp
+	mapshaper -i $< \
+		-proj +proj=longlat +datum=WGS84 +no_defs from='+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs' \
+		-info \
+		-filter-fields "" \
+		-points inner name=pt \
+		-each 'DISTCAPT_i=" "' \
+		-i $(word 3,$^) name=caps \
+		-merge-layers target="pt,caps" force name="pt"\
+		-i $(word 2,$^) name=rg \
+		-info \
+		-join target=pt source=rg \
+		-o $@ format=geojson

@@ -6,6 +6,9 @@ geocoder-api is RESTFull API that provide support for geocoding operations.
 in less than 90s.
 https://help.heroku.com/LSXQDDSI/why-does-my-java-app-crash-with-an-r10-error
 
+Migration lock problems:
+https://stackoverflow.com/questions/15528795/liquibase-lock-reasons
+
 ## Installing
 
     $ git clone https://github.com/devgateway/geocoder-api.git
